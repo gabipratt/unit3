@@ -1,16 +1,17 @@
+#include "Arduino.h"
 #include "DFRobotDFPlayerMini.h"
 #include "SoftwareSerial.h"
-#include "runningaverage.h"
-
-int sensorpin = 0;            // analog pin used to connect the sharp sensor
-int val = 0;                 // variable to store the values from sensor(initially zero)
 
 SoftwareSerial mySoftwareSerial(11, 10); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 void printDetail(uint8_t type, int value); 
+
+int sensorpin = A0;            // analog pin used to connect the sharp sensor
+int val = 0;                 // variable to store the values from sensor(initially zero)
+
 void setup()
 {
-  //Serial.begin(9600);               // starts the serial monitor
+ Serial.begin(9600);               // starts the serial monitor
  mySoftwareSerial.begin(9600);
  Serial.begin(115200);
 
