@@ -31,9 +31,10 @@ void loop() {
   val = analogRead(sensorpin);       // reads the value of the sharp sensor
   Serial.println(val);            // prints the value of the sensor to the serial monitor
   delay(400);                    // wait for this much time before printing next value 
- if ( val > 600){
+ if ( val > 300){
   myDFPlayer.volume(5);
    myDFPlayer.play(1);
+   delay (5000);
  }
   else 
   myDFPlayer.stop();
