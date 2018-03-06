@@ -1,7 +1,4 @@
-//#include <DFRobotDFPlayerMini.h>
-//#include "Arduino.h"
-//#include "SoftwareSerial.h"
-//#include "runningaverage.h"
+#include "corestats.h"
 
 #define WILL
 #include "personality.h"
@@ -43,6 +40,9 @@ int paranoidCounter = 0;               // Count the light flashes
 //RunningAverage avgL( (1000 / LDR_READ_EVERY_MS) * 10 );
 //RunningAverage avgR( (1000 / LDR_READ_EVERY_MS) * 10 );
 
+AdaptiveNormalizer mavgL(0,1);
+AdaptiveNormalizer mavgR(0,1);
+
 int leftEye, rightEye;
 
 //SoftwareSerial mySoftwareSerial(6, 10); // RX, TX // for the mp3  module
@@ -67,22 +67,8 @@ void init_motor() {
   digitalWrite(CHB_DIR, LOW);
   digitalWrite(CHB_BRK, LOW);
 
-  Serial.println( "initializing motor" );
+  Serial.println( "initializing motor" );                                                                                                               
 }
-
-//void init_audio() {
-//  Serial.println();
-//  Serial.println(F("DFRobot DFPlayer Mini Demo"));
-//  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
-//
-//  if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
-//    Serial.println(F("Unable to begin:"));
-//    Serial.println(F("1.Please recheck the connection!"));
-//    Serial.println(F("2.Please insert the SD card!"));
-//    while (true);
-//  }
-//  Serial.println(F("DFPlayer Mini online."));
-//}
 
 void setup() {
   // put your setup code here, to run once:
@@ -105,22 +91,22 @@ void debug_text() {
 }
 
 void debug_graph() {
-  Serial.print(leftEye);
+//  Serial.print(leftEye);
+//  Serial.print(",");
+//  Serial.print(rightEye);
+//  Serial.print(",");
+  Serial.print( mavgL.get() );
   Serial.print(",");
-  Serial.println(rightEye);
-//  Serial.print(",");
-//  Serial.print( avgL.getAverage() );
-//  Serial.print(",");
-//  Serial.println( avgR.getAverage() );
+  Serial.println( mavgR.get() );
 }
 
 void read_eyes() {
 
   rightEye = readEye(LDR_Right);
-//  avgR.addValue( rightEye );
+  mavgR.put( rightEye );
 
   leftEye = readEye(LDR_Left);
-//  avgL.addValue( leftEye );
+  mavgL.put( leftEye );
 }
 void blinking_light () {
   digitalWrite (LED_PIN,HIGH);
@@ -131,6 +117,7 @@ void blinking_light () {
  // delay (500);
   //digitalWrite (LED_PIN2, LOW);
  // delay (2000);
+ // Flasher led for milliseconds 
   }
   
 
@@ -150,16 +137,16 @@ void loop() {
   // normal behaviour:
   if (behaviourMode == BEHAVIOUR_NORMAL) {
     steer_with_light();
-    if (rightEye > LIGHT_THRESHOLD || leftEye > LIGHT_THRESHOLD) { // when the room is really dark it should be around 400. Maximun is 1000.
+    if (mavgR.get() > (0.4*SENSITIVITY) || mavgL.get() > (0.4*SENSITIVITY) ) { // when the room is really dark it should be around 400. Maximun is 1000.
       shake(true);
     }
-    else if (rightEye < LIGHT_THRESHOLD || leftEye < LIGHT_THRESHOLD) { // if there is no light stops vibrating
+    else if (mavgR.get() < (0.4*SENSITIVITY) || mavgL.get() < (0.4*SENSITIVITY)) { // if there is no light stops vibrating
       shake(false);
       blinking_light ();
     }
 
     // check for paranoid light:
-    if (rightEye > PARANOID_LIGHT_THRESHOLD || leftEye > PARANOID_LIGHT_THRESHOLD) { 
+    if (mavgR.get() > (0.6*SENSITIVITY) || mavgL.get() > (0.6*SENSITIVITY)) { 
       
       if (lightWasShined==false) {
         
@@ -189,7 +176,7 @@ void loop() {
       analogWrite(CHB_PWM, 0); //conect sensor value to direction
       analogWrite(CHA_PWM, 255);
     }
-    delay(5000);
+    delay(2000);
     behaviourMode = BEHAVIOUR_NORMAL;
   }
   
