@@ -124,9 +124,8 @@ void blinking_light () {
   
 
 void steer_with_light() {
-  // put your main code here, to run repeatedly:
-  analogWrite(CHB_PWM, mappedMotorValue(leftEye, true)); //conect sensor value to direction
-  analogWrite(CHA_PWM, mappedMotorValue(rightEye, false));
+  analogWrite(CHB_PWM, mappedMotorValue(mavgL.get(), true));
+  analogWrite(CHA_PWM, mappedMotorValue(mavgR.get(), false));
 }
 
 void loop() {

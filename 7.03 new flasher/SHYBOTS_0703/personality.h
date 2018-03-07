@@ -22,7 +22,7 @@
 
 #if defined(CLAUS)
 #pragma message("Using CLAUSs personality")
-#define SENSITIVITY 0.8
+#define SENSITIVITY 0.99
 #define LIGHT_THRESHOLD 100
 #define PARANOID_LIGHT_THRESHOLD 900
 #endif
