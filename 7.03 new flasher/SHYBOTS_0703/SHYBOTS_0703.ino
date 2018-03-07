@@ -1,5 +1,6 @@
 #include "corestats.h"
-#include "flasher.h"                        
+#include "flasher.h"
+
 #define CLAUS
 #include "personality.h"
 
@@ -41,9 +42,6 @@ int behaviourMode = BEHAVIOUR_NORMAL;
 boolean lightWasShined = false;
 int paranoidCounter = 0;               // Count the light flashes
 
-//RunningAverage avgL( (1000 / LDR_READ_EVERY_MS) * 10 );
-//RunningAverage avgR( (1000 / LDR_READ_EVERY_MS) * 10 );
-
 AdaptiveNormalizer mavgL(0,1);
 AdaptiveNormalizer mavgR(0,1);
 
@@ -71,11 +69,9 @@ void init_motor() {
 
 void setup() {
   // put your setup code here, to run once:
-//  mySoftwareSerial.begin(9600);
   Serial.begin(115200);
 
   init_motor();
-  //init_audio();
 
   pinMode(VIBRATION_PIN, OUTPUT);
 //  pinMode (LED_PIN, OUTPUT);
@@ -109,19 +105,7 @@ void read_eyes() {
 
 void blinking_light () {
   led.flash();
-}
-
-//  digitalWrite (LED_PIN,HIGH);
-//  delay (2000);
-//  digitalWrite (LED_PIN,LOW);
-//  delay (2000);
- // digitalWrite (LED_PIN2, HIGH);
- // delay (500);
-  //digitalWrite (LED_PIN2, LOW);
- // delay (2000);
- // Flasher led for milliseconds 
-//  }
-  
+}  
 
 void steer_with_light() {
   // put your main code here, to run repeatedly:
