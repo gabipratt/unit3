@@ -49,11 +49,6 @@ AdaptiveNormalizer mavgR(0,1);
 
 int leftEye, rightEye;
 
-//SoftwareSerial mySoftwareSerial(6, 10); // RX, TX // for the mp3  module
-//SoftwareSerial mySoftwareSerial(0, 1); // RX, TX // for the mp3  module
-//DFRobotDFPlayerMini myDFPlayer;
-//void printDetail(uint8_t type, int value);
-
 void init_motor() {
   // initialize the PWM pins
   pinMode(CHB_PWM, OUTPUT);
@@ -79,8 +74,6 @@ void setup() {
 //  mySoftwareSerial.begin(9600);
   Serial.begin(115200);
 
-pinMode(A0, INPUT);                          //included this from flasher LED code
-  
   init_motor();
   //init_audio();
 
@@ -113,7 +106,11 @@ void read_eyes() {
   leftEye = readEye(LDR_Left);
   mavgL.put( leftEye );
 }
-//void blinking_light () {
+
+void blinking_light () {
+  led.flash();
+}
+
 //  digitalWrite (LED_PIN,HIGH);
 //  delay (2000);
 //  digitalWrite (LED_PIN,LOW);
@@ -134,43 +131,19 @@ void steer_with_light() {
 
 void loop() {
   debug_graph();
-
-
   read_eyes();
+  led.update();
  
- 
- // read analog sensor for interaction
-  int reading = 0;
-  for(int i = 0; i < 4; i++) {
-    reading += analogRead(A0);
-  }
-  reading == reading >> 2;
-
-  // flash if threshold is overflown, stop otherwise
-  if(reading > threshold) {
-    led.flash();
-  } else {
-    led.stop();
-  }
-
-  led.update(); // update the flasher
-  led.debug();
-  
-  Serial.print(threshold);
-  Serial.print(", ");
-  Serial.println(reading);
-  
-  delay(10);
-
   // normal behaviour:
   if (behaviourMode == BEHAVIOUR_NORMAL) {
     steer_with_light();
+    led.stop(); // stop the beating light
     if (mavgR.get() > (0.4*SENSITIVITY) || mavgL.get() > (0.4*SENSITIVITY) ) { // when the room is really dark it should be around 400. Maximun is 1000.
       shake(true);
     }
     else if (mavgR.get() < (0*SENSITIVITY) || mavgL.get() < (0*SENSITIVITY)) { // if there is no light stops vibrating
       shake(false);
-//      blinking_light ();
+      blinking_light();
     }
 
     // check for paranoid light:
@@ -207,10 +180,8 @@ void loop() {
     delay(2000);
     behaviourMode = BEHAVIOUR_NORMAL;
   }
-  
-  delay(50);
-
 }
+
 double readEye(int eye) {
   double reading = .0;
   // read 4 times to get a stable reading
