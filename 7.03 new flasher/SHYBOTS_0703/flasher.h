@@ -29,20 +29,30 @@ class Flasher
   }
 
   void flash(int howlong = 1000) {
+    if (!flashing) {
       flashing = true;
       flashingStarted = millis();
       flashingTime = howlong;
+    }
   }
 
+/*
   void stop() {
-      flashing = false;
+      //flashing = false;
       digitalWrite(ledPin, LOW);
+  }
+*/
+
+  void reset() {
+    flashing = false;
+    flashingStarted = millis();
   }
 
   void debug(){
     Serial.print(level);
     Serial.print(", ");
   }
+  /*
 
   float smooth() {
     return (exp(sin(millis()/(float(OnTime+OffTime))*PI)) - 0.36787944) * 108.0;
@@ -66,19 +76,26 @@ class Flasher
       }
       return val;
   }
+  */
   
   void update()
   {
     // check to see if it's time to change the state of the LED
-    level = smooth();
+    //level = smooth();
 
-    if(flashing) {
-        analogWrite(ledPin, level);
+    if(flashing && (millis()-flashingStarted)<flashingTime) {
+        digitalWrite(ledPin, HIGH);//level);
     }
 
-    if(flashing && (millis() - flashingStarted) >= flashingTime ) {
-        stop();
+    else if(flashing && (millis() - flashingStarted) >= flashingTime ) {
+        //stop();
+        digitalWrite(ledPin, LOW);
+        if ((millis()-flashingStarted)>=flashingTime*2) {
+          reset();  
+        }
     }
+
+    
     
   } // update ()
 

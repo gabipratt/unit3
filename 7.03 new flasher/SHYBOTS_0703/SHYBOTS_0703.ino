@@ -1,7 +1,7 @@
 #include "corestats.h"
 #include "flasher.h"
 
-#define CLAUS
+#define WILL
 #include "personality.h"
 
 #define CHB_DIR 13
@@ -108,9 +108,15 @@ void blinking_light () {
 }  
 
 void steer_with_light() {
-  analogWrite(CHB_PWM, mappedMotorValue(mavgL.get(), true));
-  analogWrite(CHA_PWM, mappedMotorValue(mavgR.get(), false));
+//put your main code here, to run repeatedly:
+ analogWrite(CHB_PWM, mappedMotorValue(leftEye, true)); //conect sensor value to direction
+ analogWrite(CHA_PWM, mappedMotorValue(rightEye, false));
 }
+
+//void steer_with_light() {
+//  analogWrite(CHB_PWM, mappedMotorValue(mavgL.get(), true));
+//  analogWrite(CHA_PWM, mappedMotorValue(mavgR.get(), false));
+//}
 
 void loop() {
   debug_graph();
@@ -120,7 +126,9 @@ void loop() {
   // normal behaviour:
   if (behaviourMode == BEHAVIOUR_NORMAL) {
     steer_with_light();
-    led.stop(); // stop the beating light
+    
+    //led.stop(); // stop the beating light
+    
     if (mavgR.get() > (0.4*SENSITIVITY) || mavgL.get() > (0.4*SENSITIVITY) ) { // when the room is really dark it should be around 400. Maximun is 1000.
       shake(true);
     }
