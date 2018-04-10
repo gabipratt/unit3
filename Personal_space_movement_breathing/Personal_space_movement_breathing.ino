@@ -1,7 +1,10 @@
 #include <Servo.h>
-
 #include "PersonalSpace.cpp"
-#define READ_DELAY 100 //Delay between readings in milliseconds
+#define READ_DELAY 10 //Delay between readings in milliseconds (used to be 100)
+
+
+int breatheCycleMilliseconds = 4000;
+PersonalSpace personalSpace;
 
 #define CHB_DIR 13
 #define CHB_PWM 11
@@ -13,11 +16,11 @@
 #define CHA_BRK 9
 #define CHA_SNS A0
 
-PersonalSpace personalSpace;
-Servo myservo;  // create servo object to control a servo
+//PersonalSpace personalSpace;
+//Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
 
-int pos = 0;    // variable to store the servo position
+//int pos = 0;    // variable to store the servo position
 
 
 void init_motor() {
@@ -45,9 +48,10 @@ void init_motor() {
 void setup()
 {
   //Start the serial connection
-  Serial.begin(9600);
+   Serial.begin(9600);
+   //myservo.attach(5);  // attaches the servo on pin 5 to the servo object
+   setupBreathing();
    init_motor();
-    myservo.attach(5);  // attaches the servo on pin 5 to the servo object
 }
 
 void loop()
@@ -63,27 +67,31 @@ void loop()
       Serial.println("DANGER!");
       analogWrite(CHB_PWM, random(0,255));
       analogWrite(CHA_PWM, random(0,255));
+      breatheCycleMilliseconds = 700;
 
       //servo movement
-for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+//for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
+    //myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    //delay(15);                       // waits 15ms for the servo to reach the position
+  //}
+ // for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+  //  myservo.write(pos);              // tell servo to go to position in variable 'pos'
+   // delay(15);                       // waits 15ms for the servo to reach the position
 
 
 
       
-    }
+   // }
     }    else {
       Serial.print("Proximity percantage = ");
       float perc = personalSpace.getProximityPercentage();
+     //steering
       Serial.println(perc);
       analogWrite(CHB_PWM, map(perc,0,100,0,255));
       analogWrite(CHA_PWM, map(perc,0,100,0,255));
+      
+      breatheCycleMilliseconds = 4000;
       //This shows the range in percentage from 0 to 100% within the range untill the DANGER range
     }
 
@@ -92,10 +100,11 @@ for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
     Serial.println("Can't see anyone");
     //Range above the defined sight range
      analogWrite(CHB_PWM, 0);
-      analogWrite(CHA_PWM, 0);
+     analogWrite(CHA_PWM, 0);
+     breatheCycleMilliseconds = 4000;
   }
-
+  updateBreathing();
   //Delay before the next reading
-  delay(READ_DELAY);
+  //delay(READ_DELAY);
 }
 

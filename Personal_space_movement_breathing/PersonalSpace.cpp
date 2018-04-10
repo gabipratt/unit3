@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#define PING_PIN 4 //Use digital pin 4 for the range finder
+#define PING_PIN 4 //Use digital pin 4  for the range finder
 #define MAX_DEPTH_SIGHT 100 // the distance in cm it can "see"
 #define DANGER_DISTANCE 10 // the danger distance in cm it can "see"
 
