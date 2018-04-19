@@ -2,7 +2,21 @@
 #include "PersonalSpace.cpp"
 #define READ_DELAY 10 //Delay between readings in milliseconds (used to be 100)
 
-
+//int myPins[] = { 7, 6, 3};
+//int pattern1[][5] = {
+//  { 1, 1, 1, 1, 1 },
+//  { 1, 1, 1, 1, 0 },
+//  { 1, 1, 1, 0, 0 },
+//  { 1, 1, 0, 0, 0 },
+//  { 1, 0, 0, 0, 0 },
+//};
+//int pattern2[][8] = {
+//  { 1, 0, 0, 0, 0, 0, 0, 0 },
+//  { 0, 1, 0, 0, 0, 0, 0, 1 },
+//  { 0, 0, 1, 0, 0, 0, 1, 0 },
+//  { 0, 0, 0, 1, 0, 1, 0, 0 },
+//  { 0, 0, 0, 0, 1, 0, 0, 0 },
+//};
 int breatheCycleMilliseconds = 4000;
 PersonalSpace personalSpace;
 

@@ -4,10 +4,12 @@ int breatheMax = 180;
 
 float breatheOutPercentage = 0.65f;
 
-Servo myservo;  // create servo object to control a servo
+Servo myservoR;  // create servo object to control a servo
+Servo myservoL;
 
 void setupBreathing() {
-  myservo.attach(5);  // attaches the servo on pin 9 to the servo object 
+  myservoR.attach(5);  // attaches the servo on pin 9 to the servo object 
+  myservoL.attach(10); // attaching second servo to pin 2
 }
 
 void updateBreathing() {
@@ -20,7 +22,8 @@ void updateBreathing() {
   } else {
     value = mapF(breatheCyclePercentage, breatheOutPercentage, 1.0, breatheMax, breatheMin);
   }
-  myservo.write((int)value);
+  myservoR.write((int)value);
+  myservoL.write((int)value);
 }
 
 float mapF(float v, float v0, float v1, float o0, float o1) {
